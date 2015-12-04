@@ -2,6 +2,8 @@ import numpy as np
 import time
 import math
 import random
+from out import write_to_file
+
 from gurobipy import *
 
 def euclidean_distance(x, y):
@@ -25,25 +27,6 @@ def manhattan_distance(vecA, vecB):
 def jaccard_distance(vecA, vecB):
     j = 1.0*(len(vecA) - manhattan_distance(vecA, vecB))/len(vecA)
     return j
-
-# Obtains data from file reading line by line
-# Each value in a line that is either 0 or 1 will be added to the dataset
-def load_dataset(filename = 'inst.b'):
-    f = open(filename,'r')
-    dataset = []
-    
-    for line in f:
-        valueList = []
-        for i in range (0,len(line)):
-            c = line[i]
-            if (c == '0'):
-                valueList.append(0)
-            elif (c == '1'):
-                valueList.append(1)
-        
-        dataset.append(valueList)
-    
-    return dataset
 
 def load_data(inputdata):
     mydata = np.loadtxt(inputdata, dtype = np.object, delimiter = ',')
@@ -102,13 +85,17 @@ def kmedian(m, n, c, k, known_g):
     return model
 
 if __name__ == "__main__":
-    #dataset = load_dataset()
-    dataset, label = load_data("test-inst.b")
+    
+    # Receives parameter inputs
+    known_g = (sys.argv[1] == "True")
+    num_g = int(sys.argv[2])
+    fpn = str(sys.argv[3])
+    
+    dataset, label = load_data(fpn)
     
     n = len(dataset)
     m = n
-    known_g = False
-    k = 3
+    k = num_g
 
     if known_g == False:
         k = int(math.sqrt(n/2))
@@ -119,11 +106,12 @@ if __name__ == "__main__":
 
     for i in range(0, n):
         for j in range(0, n):
-            d[i][j] = manhattan_distance(dataset[i], dataset[j])
+            d[i][j] = euclidean_distance(dataset[i], dataset[j])
 
     model = kmedian(m, n, d, k, known_g)
     
     #model.Params.Threads = 1
+    model.Params.OutputFlag = 0 # silent mode
     model.optimize()
     x,y = model.__data
     
@@ -134,14 +122,23 @@ if __name__ == "__main__":
     allocation = np.zeros(n)
 
     print "Centers:", centers
-    #print "Edges:", edges
+    print "Edges:", edges
+
+    class_counter = np.zeros(len(centers), dtype = int)
+
+    acc = 0
+    #if known_g:
+    for e in edges:
+        l = centers.index(e[1])
+        if label[e[0]] == l and known_g:
+            acc = acc+1
+        class_counter[l] = class_counter[l]+1
 
     if known_g:
-        correct = 0
-        for e in edges:
-            if label[e[0]] == centers.index(e[1]):
-                correct = correct+1
-
-        print 'acc =', (1.0*correct)/n
+        acc = (1.0*acc)/n
+        print 'acc =', acc
     
-    print 'time:', time.time() - start
+    elapsed_time = time.time() - start
+    print 'time:', elapsed_time
+
+    write_to_file("out-pmedian", model.ObjVal, centers, edges, n, k, known_g, class_counter, acc, elapsed_time)
