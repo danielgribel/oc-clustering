@@ -111,7 +111,7 @@ if __name__ == "__main__":
     f.write( 'Number of Iterations = ' + str(num_iter) + '\n' )
     f.write( 'Time (IO and Dataset Loading not included) = ' + str(runtime) + '\n' )
     
-    '''
+    # Makes calculations to print accuracy
     if known_g:
         # Who is the group belonging to a centroid
         c = len(clusters[0][0])
@@ -130,31 +130,27 @@ if __name__ == "__main__":
                     max_ind = j
             print col
             group_cluster[i] = int(max_ind / c_y) 
-            group_cluster[i] = max(group_cluster[i], (g - 1))
+            #group_cluster[i] = max(group_cluster[i], (g - 1))
                     
+        # Creates auxiliary array that holds index of cluster instead of groups
+        '''
+        index_gc = len(group_cluster) * [0]
+        for i in range(0,len(group_cluster)):
+            for j in range (0,len(group_cluster)):
+                if (group_cluster[i] == j)
+                    index_gc[i] = j
+        '''
+        
         correct = 0
-        
-        
-        print 'clusteresr'
-        print group_cluster[0]
-        print group_cluster[1]
-        print group_cluster[2]
-
-        cont = 0
-        for i in range (0,len(clusters)):
-            
-            if (i == 0):
-                t = 0
-            else:
-                t = len(cluster[i - 1]) - 1
-                
-            for j in range(t,len(cluster[i])):
-                if group_cluster[i] == label[j]:
-                    correct = correct + 1
-            
+        data_id = 0
+        for i in range(0,len(clusters)):
+            for j in range(0,len(clusters[i])):
+                for k in range(0,n):
+                    if (clusters[i][j] == dataset[k]).all():
+                        if (group_cluster[i] == label[k]):
+                            correct += 1          
 
         f.write( 'acc =' + str((1.0 * correct) /n) + '\n')
-    '''
     
     f.close()
 
