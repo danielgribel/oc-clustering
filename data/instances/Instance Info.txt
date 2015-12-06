@@ -1,0 +1,51 @@
+alpha:
+
+c = 25
+c_y = 5
+g = 3
+p = 0.85
+n_min = n_max = n
+
+
+beta:
+
+c = 25
+c_y = 3
+g = 6
+p = 0.85
+n_min = n_max = n
+
+gamma:
+
+gamma-203:
+n = 204
+c = 25
+c_y = 5
+g = 3
+p = 0.85
+n_min = 163
+n_max = 244
+n_g1 = 60; n_g2 = 58; n_g3 = 85
+g_sum = 203
+
+gamma-503:
+n = 504
+c = 25
+c_y = 5
+g = 3
+p = 0.85
+n_min = 403
+n_max = 604
+n_g1 = 197; n_g2 = 153; n_g3 = 153
+g_sum = 503
+
+gamma-1014:
+n = 1014
+c = 25
+c_y = 5
+g = 3
+p = 0.85
+n_min = 811
+n_max = 1216
+n_g1 = 364; n_g2 = 346; n_g3 = 304
+g_sum = 1014
